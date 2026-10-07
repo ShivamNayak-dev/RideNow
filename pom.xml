@@ -45,6 +45,9 @@
         <module>rider-service</module>
         <module>driver-service</module>
         <module>location-service</module>
+        <module>ride-service</module>
+        <module>payment-service</module>
+        <module>notification-service</module>
     </modules>
 
 </project>
