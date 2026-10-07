@@ -42,6 +42,7 @@
         <module>service-discovery</module>
         <module>api-gateway</module>
         <module>auth-service</module>
+        <module>rider-service</module>
     </modules>
 
 </project>
