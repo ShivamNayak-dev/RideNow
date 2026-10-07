@@ -41,6 +41,7 @@
     <modules>
         <module>service-discovery</module>
         <module>api-gateway</module>
+        <module>auth-service</module>
     </modules>
 
 </project>
