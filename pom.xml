@@ -43,6 +43,8 @@
         <module>api-gateway</module>
         <module>auth-service</module>
         <module>rider-service</module>
+        <module>driver-service</module>
+        <module>location-service</module>
     </modules>
 
 </project>
