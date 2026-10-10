@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.*;
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name="riders", uniqueConstraints = {
         @UniqueConstraint(columnNames = "user_id"),
         @UniqueConstraint(columnNames = "phone")

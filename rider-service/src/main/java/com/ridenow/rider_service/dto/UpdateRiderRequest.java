@@ -11,7 +11,7 @@ public record UpdateRiderRequest(
         String name,
 
         @NotBlank
-        
+
         String phone,
 
         @NotBlank
