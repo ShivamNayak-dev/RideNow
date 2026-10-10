@@ -11,7 +11,7 @@ public interface RiderRepository extends JpaRepository<Rider, Long> {
     boolean existsByUserId(String userId);
     boolean existsByPhone(String phone);
 
-    
+
 
 
 }
