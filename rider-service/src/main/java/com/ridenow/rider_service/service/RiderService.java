@@ -3,11 +3,13 @@ package com.ridenow.rider_service.service;
 import com.ridenow.rider_service.dto.CreateRiderRequest;
 import com.ridenow.rider_service.dto.UpdateRiderRequest;
 import com.ridenow.rider_service.entity.Rider;
+import com.ridenow.rider_service.exception.RiderNotFoundException;
+import com.ridenow.rider_service.exception.ResourceConflictException;
 import com.ridenow.rider_service.repository.RiderRepository;
-import org.springframework.http.HttpStatus;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class RiderService {
@@ -19,16 +21,18 @@ public class RiderService {
     }
 
     @Transactional
-    public Rider createRider(String userId, CreateRiderRequest request) {
+    public Rider createRider(
+            String userId,
+            CreateRiderRequest request) {
 
         if (riderRepository.existsByUserId(userId)) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Rider profile already exists");
+            throw new ResourceConflictException(
+                    "Rider profile already exists");
         }
 
         if (riderRepository.existsByPhone(request.phone())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Phone number already exists");
+            throw new ResourceConflictException(
+                    "Phone number already exists");
         }
 
         Rider rider = new Rider();
@@ -37,33 +41,44 @@ public class RiderService {
         rider.setPhone(request.phone());
         rider.setEmail(request.email());
 
-        return riderRepository.save(rider);
+        try {
+            return riderRepository.saveAndFlush(rider);
+        } catch (DataIntegrityViolationException ex) {
+            throw new ResourceConflictException(
+                    "Rider profile or phone number already exists");
+        }
     }
 
+    @Transactional(readOnly = true)
     public Rider getRider(String userId) {
         return riderRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Rider profile not found"));
+                .orElseThrow(() ->
+                        new RiderNotFoundException(
+                                "Rider profile not found"));
     }
 
     @Transactional
-    public Rider updateRider(String userId, UpdateRiderRequest request) {
+    public Rider updateRider(
+            String userId,
+            UpdateRiderRequest request) {
 
         Rider rider = getRider(userId);
 
-        boolean phoneUsedByAnotherRider =
-                riderRepository.existsByPhone(request.phone())
-                        && !rider.getPhone().equals(request.phone());
-
-        if (phoneUsedByAnotherRider) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Phone number already exists");
+        if (riderRepository.existsByPhone(request.phone())
+                && !rider.getPhone().equals(request.phone())) {
+            throw new ResourceConflictException(
+                    "Phone number already exists");
         }
 
         rider.setName(request.name());
         rider.setPhone(request.phone());
         rider.setEmail(request.email());
 
-        return riderRepository.save(rider);
+        try {
+            return riderRepository.saveAndFlush(rider);
+        } catch (DataIntegrityViolationException ex) {
+            throw new ResourceConflictException(
+                    "Phone number already exists");
+        }
     }
 }
