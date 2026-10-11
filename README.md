@@ -208,9 +208,9 @@ Refresh the Eureka dashboard. You should see `API-GATEWAY` with status `UP`.
 - [x] Repository structure and Git workflow
 - [x] Eureka service discovery
 - [x] API Gateway registered with Eureka
-- [ ] Maven parent for shared Spring Boot and Spring Cloud versions
-- [ ] Auth service with JWT
-- [ ] Rider and driver services
+- [x] Maven parent for shared Spring Boot and Spring Cloud versions
+- [x] Auth service with JWT
+- [x] Rider and driver services
 - [ ] Location service with Redis
 - [ ] Ride service and driver assignment
 - [ ] Kafka event streaming
