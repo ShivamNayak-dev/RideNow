@@ -115,8 +115,8 @@ sequenceDiagram
 |---|---|---|
 | `service-discovery` | Eureka registry, services register and find each other here | ✅ Done |
 | `api-gateway` | Single entry point, routing, later JWT checks | ✅ Done |
-| `auth-service` | Signup, login, JWT tokens | ⏳ Planned |
-| `rider-service` | Rider profiles | ⏳ Planned |
+| `auth-service` | Signup, login, JWT tokens | ✅ Done |
+| `rider-service` | Rider profiles | ✅ Done |
 | `driver-service` | Driver profiles and availability | ⏳ Planned |
 | `location-service` | Live driver locations | ⏳ Planned |
 | `ride-service` | Ride lifecycle and driver assignment | ⏳ Planned |
