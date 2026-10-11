@@ -11,6 +11,10 @@ public record CreateRiderRequest(
         String name,
 
         @NotBlank
+        @Pattern(
+                regexp = "^[0-9+() -]{7,20}$",
+                message = "Phone must contain 7 to 20 characters using digits or + ( ) -"
+        )
         String phone,
 
         @NotBlank
