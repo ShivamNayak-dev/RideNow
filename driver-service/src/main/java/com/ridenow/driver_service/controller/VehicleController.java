@@ -51,3 +51,5 @@ public class VehicleController {
                         jwt.getSubject(), request));
     }
 }
+
+// One limitation to remember: vehicle and driver status operations currently have basic business rules. Production-level concurrency and coordination with ride-service will require additional work later.
