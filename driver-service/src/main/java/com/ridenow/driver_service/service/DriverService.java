@@ -1,3 +1,4 @@
+
 package com.ridenow.driver_service.service;
 
 import com.ridenow.driver_service.dto.CreateDriverRequest;
@@ -5,6 +6,9 @@ import com.ridenow.driver_service.dto.DriverResponse;
 import com.ridenow.driver_service.dto.UpdateDriverRequest;
 import com.ridenow.driver_service.entity.Driver;
 import com.ridenow.driver_service.enums.DriverStatus;
+import com.ridenow.driver_service.exception.BusinessRuleException;
+import com.ridenow.driver_service.exception.ResourceConflictException;
+import com.ridenow.driver_service.exception.ResourceNotFoundException;
 import com.ridenow.driver_service.repository.DriverRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +27,14 @@ public class DriverService {
             String userId, CreateDriverRequest request) {
 
         if (driverRepository.existsByUserId(userId)) {
-            throw new IllegalStateException(
+            throw new ResourceConflictException(
                     "Driver profile already exists for this user");
         }
 
-        if (driverRepository.existsByLicenseNumber(
-                request.licenseNumber())) {
-            throw new IllegalStateException(
+        String licenseNumber = request.licenseNumber().trim();
+
+        if (driverRepository.existsByLicenseNumber(licenseNumber)) {
+            throw new ResourceConflictException(
                     "License number is already registered");
         }
 
@@ -37,7 +42,7 @@ public class DriverService {
                 userId,
                 request.name().trim(),
                 request.phone().trim(),
-                request.licenseNumber().trim());
+                licenseNumber);
 
         return toResponse(driverRepository.save(driver));
     }
@@ -51,6 +56,7 @@ public class DriverService {
             String userId, UpdateDriverRequest request) {
 
         Driver driver = findByUserId(userId);
+
         driver.updateProfile(
                 request.name().trim(),
                 request.phone().trim());
@@ -62,11 +68,12 @@ public class DriverService {
         Driver driver = findByUserId(userId);
 
         if (driver.getStatus() == DriverStatus.BUSY) {
-            throw new IllegalStateException(
+            throw new BusinessRuleException(
                     "Busy drivers cannot change availability");
         }
 
         driver.setStatus(DriverStatus.AVAILABLE);
+
         return toResponse(driverRepository.save(driver));
     }
 
@@ -74,17 +81,18 @@ public class DriverService {
         Driver driver = findByUserId(userId);
 
         if (driver.getStatus() == DriverStatus.BUSY) {
-            throw new IllegalStateException(
+            throw new BusinessRuleException(
                     "Busy drivers cannot go offline");
         }
 
         driver.setStatus(DriverStatus.OFFLINE);
+
         return toResponse(driverRepository.save(driver));
     }
 
     private Driver findByUserId(String userId) {
         return driverRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Driver profile not found"));
     }
 
